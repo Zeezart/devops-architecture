@@ -1,0 +1,19 @@
+- hosts: all
+  become: true
+  roles:
+    - docker
+
+- hosts: db
+  become: true
+  roles:
+    - db
+
+- hosts: backend
+  become: true
+  roles:
+    - backend
+
+- hosts: frontend
+  become: true
+  roles:
+    - frontend

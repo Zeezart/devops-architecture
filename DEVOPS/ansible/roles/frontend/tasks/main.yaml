@@ -1,0 +1,8 @@
+- name: Run frontend container
+  docker_container:
+    name: frontend
+    image: us-central1-docker.pkg.dev/bertflix-id/bertflix-image/bertflix-client
+    state: started
+    restart_policy: always
+    ports:
+      - "3000:80" # Map port 3000 on the host to port 80 in the container, so the instance isnt exposed to the public on port 80, but we can still access the frontend through port 3000
