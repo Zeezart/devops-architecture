@@ -1,0 +1,38 @@
+name: CI-CD Pipeline
+
+on:
+  push:
+    branches: [ master ]
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Authenticate to Google Cloud
+      uses: google-github-actions/auth@v2
+      with:
+        credentials_json: '${{ secrets.GCP_SA_KEY }}'
+
+    - name: Configure Docker for Artifact Registry
+      run: gcloud auth configure-docker us-central1-docker.pkg.dev
+
+    - name: Build backend image
+      run: |
+        docker build -t us-central1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/bertflix-image/bertflix-server ./APP/server
+
+    - name: Build frontend image
+      run: |
+        docker build -t us-central1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/bertflix-image/bertflix-client ./APP/client
+
+    - name: Push backend image
+      run: |
+        docker push us-central1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/bertflix-image/bertflix-server
+
+    - name: Push frontend image
+      run: |
+        docker push us-central1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/bertflix-image/bertflix-client
